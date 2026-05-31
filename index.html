@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>森林冒险家园 - 家务轮盘游戏</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --green-50: #EAF3DE;
+  --green-100: #C0DD97;
+  --green-200: #97C459;
+  --green-400: #639922;
+  --green-600: #3B6D11;
+  --green-800: #27500A;
+  --green-900: #173404;
+  --blue-50: #E6F1FB;
+  --blue-100: #B5D4F4;
+  --blue-200: #85B7EB;
+  --blue-400: #378ADD;
+  --blue-600: #185FA5;
+  --blue-800: #0C447C;
+  --amber-50: #FAEEDA;
+  --amber-100: #FAC775;
+  --amber-200: #EF9F27;
+  --amber-400: #BA7517;
+  --amber-600: #854F0B;
+  --amber-800: #633806;
+  --gray-50: #F1EFE8;
+  --gray-100: #D3D1C7;
+  --gray-200: #B4B2A9;
+  --gray-400: #888780;
+  --gray-600: #5F5E5A;
+  --gray-800: #444441;
+  --gray-900: #2C2C2A;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: var(--gray-50);
+  color: var(--gray-900);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Mobile container */
+.phone-frame {
+  max-width: 390px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: var(--gray-50);
+  position: relative;
+  padding-bottom: 80px;
+}
+
+/* ===== Pages ===== */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ===== Tab Bar ===== */
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 390px;
+  background: #fff;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 12px 0 20px;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+  z-index: 100;
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 4px 12px;
+  border-radius: 12px;
+}
+
+.tab-item.active {
+  color: var(--green-600);
+}
+
+.tab-item .tab-icon { font-size: 24px; }
+.tab-item .tab-label { font-size: 11px; font-weight: 500; }
+
+/* ===== Header ===== */
+.player-header {
+  background: linear-gradient(135deg, var(--green-400), var(--green-600));
+  color: #fff;
+  padding: 24px 20px 20px;
+  border-radius: 0 0 24px 24px;
+}
+
+.level-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.level-badge {
+  background: rgba(255,255,255,0.2);
+  padding: 6px 16px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.level-num {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.stats-row {
+  display: flex;
+  gap: 20px;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.15);
+  padding: 8px 14px;
+  border-radius: 12px;
+  flex: 1;
+}
+
+.stat-icon { font-size: 18px; }
+.stat-value { font-size: 16px; font-weight: bold; }
+.stat-label { font-size: 11px; opacity: 0.8; }
+
+/* ===== AI Tip Banner ===== */
+.ai-tip-banner {
+  margin: 16px;
+  background: linear-gradient(135deg, var(--amber-50), var(--amber-100));
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid var(--amber-200);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.ai-tip-banner:hover { transform: scale(1.02); }
+
+.ai-tip-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.ai-avatar {
+  font-size: 28px;
+}
+
+.ai-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--amber-600);
+}
+
+.ai-message {
+  font-size: 13px;
+  color: var(--amber-800);
+  line-height: 1.6;
+}
+
+.ai-knowledge {
+  font-size: 12px;
+  color: var(--amber-600);
+  margin-top: 8px;
+  padding: 8px;
+  background: rgba(255,255,255,0.5);
+  border-radius: 8px;
+  font-style: italic;
+}
+
+/* ===== Age Selector ===== */
+.age-selector {
+  display: flex;
+  gap: 12px;
+  padding: 0 16px;
+  margin: 16px 0;
+}
+
+.age-option {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 8px;
+  background: #fff;
+  border-radius: 16px;
+  border: 2px solid var(--green-50);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.age-option.active {
+  background: var(--green-400);
+  border-color: var(--green-600);
+}
+
+.age-option.active .age-text { color: #fff; }
+.age-option .age-emoji { font-size: 32px; margin-bottom: 4px; }
+.age-option .age-text { font-size: 12px; color: var(--gray-600); font-weight: 500; }
+
+/* ===== Wheel ===== */
+.wheel-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.wheel-container {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin-bottom: 24px;
+}
+
+.wheel-canvas {
+  width: 300px;
+  height: 300px;
+  transition: transform 3s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+}
+
+.wheel-pointer {
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 36px;
+  z-index: 10;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-6px); }
+}
+
+.draw-btn {
+  background: linear-gradient(135deg, var(--green-400), var(--green-600));
+  color: #fff;
+  border: none;
+  padding: 16px 64px;
+  border-radius: 32px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(99, 153, 34, 0.4);
+  transition: all 0.3s;
+}
+
+.draw-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(99, 153, 34, 0.5); }
+.draw-btn:active { transform: translateY(0); }
+.draw-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* ===== Result Card ===== */
+.result-section {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.result-section.show { display: flex; }
+
+.card-reveal {
+  animation: cardReveal 0.6s ease-out;
+}
+
+@keyframes cardReveal {
+  from { transform: scale(0.3) rotateY(90deg); opacity: 0; }
+  to { transform: scale(1) rotateY(0deg); opacity: 1; }
+}
+
+.game-card {
+  width: 320px;
+  border-radius: 24px;
+  padding: 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.game-card.N { background: var(--green-50); border: 3px solid var(--green-400); }
+.game-card.R { background: var(--blue-50); border: 3px solid var(--blue-400); }
+.game-card.SR { background: var(--amber-50); border: 3px solid var(--amber-400); }
+
+.rarity-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 14px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.game-card.N .rarity-badge { background: var(--green-400); }
+.game-card.R .rarity-badge { background: var(--blue-400); }
+.game-card.SR .rarity-badge { background: var(--amber-400); }
+
+.card-emoji {
+  font-size: 72px;
+  margin: 16px 0;
+  animation: emojiPulse 2s infinite;
+}
+
+@keyframes emojiPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.card-name {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--gray-900);
+  margin-bottom: 8px;
+}
+
+.card-task {
+  font-size: 16px;
+  color: var(--gray-600);
+  margin-bottom: 8px;
+}
+
+.card-desc {
+  font-size: 14px;
+  color: var(--gray-400);
+  font-style: italic;
+  margin-bottom: 16px;
+}
+
+.card-reward {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  padding-top: 12px;
+}
+
+.reward-xp { color: var(--green-600); font-weight: bold; font-size: 15px; }
+.reward-gold { color: var(--amber-600); font-weight: bold; font-size: 15px; }
+
+.action-btns {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.btn {
+  padding: 14px 36px;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.btn-confirm { background: var(--green-400); color: #fff; box-shadow: 0 4px 12px rgba(99, 153, 34, 0.3); }
+.btn-confirm:hover { background: var(--green-600); }
+.btn-redraw { background: #fff; color: var(--green-400); border: 2px solid var(--green-400); }
+
+/* ===== Task Page ===== */
+.page-title {
+  font-size: 20px;
+  font-weight: 500;
+  padding: 20px 20px 8px;
+  color: var(--gray-900);
+}
+
+.page-subtitle {
+  font-size: 13px;
+  color: var(--gray-400);
+  padding: 0 20px;
+}
+
+.task-card {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  margin: 12px 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  transition: all 0.3s;
+}
+
+.task-card.completed { opacity: 0.5; }
+
+.task-emoji {
+  font-size: 36px;
+  margin-right: 14px;
+}
+
+.task-content { flex: 1; min-width: 0; }
+
+.task-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.task-name { font-size: 15px; font-weight: 500; color: var(--gray-900); }
+
+.rarity-tag {
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.rarity-tag.N { background: var(--green-400); }
+.rarity-tag.R { background: var(--blue-400); }
+.rarity-tag.SR { background: var(--amber-400); }
+
+.task-task { font-size: 13px; color: var(--gray-600); }
+.task-desc { font-size: 12px; color: var(--gray-400); font-style: italic; }
+
+.task-reward { display: flex; gap: 12px; margin-top: 4px; }
+.task-reward span { font-size: 12px; font-weight: 500; }
+
+.check-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid var(--gray-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.check-btn.checked {
+  background: var(--green-400);
+  border-color: var(--green-400);
+}
+
+.check-icon {
+  color: #fff;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+/* Progress */
+.progress-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  margin: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.progress-title { font-size: 16px; font-weight: 500; }
+.progress-count { font-size: 16px; font-weight: bold; color: var(--green-400); }
+
+.progress-bar {
+  height: 12px;
+  background: var(--green-50);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green-200), var(--green-400));
+  border-radius: 6px;
+  transition: width 0.5s ease;
+}
+
+.progress-total {
+  display: flex;
+  justify-content: space-around;
+}
+
+.progress-total span { font-size: 13px; font-weight: 500; }
+
+/* ===== Collection Page ===== */
+.collection-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 16px;
+}
+
+.collection-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px 8px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+}
+
+.collection-card:hover { transform: translateY(-2px); }
+.collection-card.collected { border-color: var(--green-400); }
+.collection-card.hidden { background: var(--gray-100); }
+
+.collection-card .card-emoji { font-size: 32px; }
+.collection-card .card-name { font-size: 11px; color: var(--gray-900); margin-top: 4px; }
+.collection-card.hidden .card-emoji { filter: blur(4px); }
+.collection-card.hidden .card-name { color: var(--gray-400); }
+
+.collection-card .rarity-badge {
+  position: static;
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 8px;
+  color: #fff;
+}
+
+.collection-card.N .rarity-badge { background: var(--green-400); }
+.collection-card.R .rarity-badge { background: var(--blue-400); }
+.collection-card.SR .rarity-badge { background: var(--amber-400); }
+
+/* ===== Shop Page ===== */
+.shop-item {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  margin: 12px 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.shop-icon { font-size: 36px; margin-right: 14px; }
+.shop-info { flex: 1; }
+.shop-name { font-size: 15px; font-weight: 500; color: var(--gray-900); }
+.shop-desc { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+
+.shop-price {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--amber-50);
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--amber-600);
+  cursor: pointer;
+  border: none;
+}
+
+.shop-price:hover { background: var(--amber-100); }
+
+/* ===== Achievement Page ===== */
+.achievement-card {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  margin: 12px 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.achievement-card.locked { opacity: 0.4; }
+
+.achievement-icon { font-size: 36px; margin-right: 14px; }
+.achievement-info { flex: 1; }
+.achievement-name { font-size: 15px; font-weight: 500; color: var(--gray-900); }
+.achievement-desc { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+.achievement-reward { font-size: 12px; color: var(--green-600); font-weight: bold; margin-top: 4px; }
+
+/* ===== Modal ===== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.modal-overlay.show { display: flex; }
+
+.modal {
+  width: 340px;
+  background: #fff;
+  border-radius: 24px;
+  padding: 32px 24px;
+  text-align: center;
+  animation: modalIn 0.3s ease-out;
+}
+
+@keyframes modalIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modal-title { font-size: 22px; font-weight: bold; color: var(--gray-900); margin-bottom: 20px; }
+.modal-btn {
+  margin-top: 20px;
+  padding: 14px 48px;
+  background: var(--green-400);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* ===== Toast ===== */
+.toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-size: 16px;
+  z-index: 300;
+  display: none;
+  animation: toastIn 0.3s ease-out;
+}
+
+.toast.show { display: block; }
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* ===== Empty State ===== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 40px;
+  text-align: center;
+}
+
+.empty-state .emoji { font-size: 64px; margin-bottom: 16px; }
+.empty-state .text { font-size: 16px; color: var(--gray-600); }
+.empty-state .hint { font-size: 13px; color: var(--gray-400); margin-top: 8px; }
+
+/* ===== Filter Bar ===== */
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  overflow-x: auto;
+}
+
+.filter-item {
+  padding: 8px 16px;
+  background: #fff;
+  border-radius: 12px;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.filter-item.active {
+  background: var(--green-400);
+  color: #fff;
+}
+
+/* Scrollbar hide */
+.filter-bar::-webkit-scrollbar { display: none; }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <!-- ===== Page: 转盘抽奖 ===== -->
+  <div class="page active" id="page-index">
+    <div class="player-header">
+      <div class="level-row">
+        <div>
+          <span class="level-badge" id="levelTitle">见习冒险者</span>
+          <span class="level-num" id="levelNum">Lv.1</span>
+        </div>
+        <div class="stats-row">
+          <div class="stat-item">
+            <span class="stat-icon">⭐</span>
+            <span class="stat-value" id="totalXp">0</span>
+            <span class="stat-label">经验</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-icon">🪙</span>
+            <span class="stat-value" id="goldNum">0</span>
+            <span class="stat-label">金币</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-icon">🔥</span>
+            <span class="stat-value" id="consecDays">0</span>
+            <span class="stat-label">连续</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI 每日知识 -->
+    <div class="ai-tip-banner" id="aiBanner">
+      <div class="ai-tip-header">
+        <span class="ai-avatar">🌳</span>
+        <span class="ai-name">森林长者</span>
+      </div>
+      <div class="ai-message" id="aiMessage"></div>
+      <div class="ai-knowledge" id="aiKnowledge"></div>
+    </div>
+
+    <!-- 年龄选择 -->
+    <div class="age-selector">
+      <div class="age-option active" data-age="little" onclick="selectAge('little')">
+        <span class="age-emoji">🌱</span>
+        <span class="age-text">3-6岁</span>
+      </div>
+      <div class="age-option" data-age="standard" onclick="selectAge('standard')">
+        <span class="age-emoji">🌳</span>
+        <span class="age-text">7-12岁</span>
+      </div>
+      <div class="age-option" data-age="leader" onclick="selectAge('leader')">
+        <span class="age-emoji">👑</span>
+        <span class="age-text">9-12岁进阶</span>
+      </div>
+    </div>
+
+    <!-- 轮盘 -->
+    <div class="wheel-section" id="wheelSection">
+      <div class="wheel-container">
+        <div class="wheel-pointer">🌟</div>
+        <canvas class="wheel-canvas" id="wheelCanvas" width="600" height="600"></canvas>
+      </div>
+      <button class="draw-btn" id="drawBtn" onclick="spinWheel()">🎯 开始抽取</button>
+    </div>
+
+    <!-- 结果 -->
+    <div class="result-section" id="resultSection">
+      <div class="card-reveal">
+        <div class="game-card" id="resultCard">
+          <span class="rarity-badge" id="resultRarity"></span>
+          <div class="card-emoji" id="resultEmoji"></div>
+          <div class="card-name" id="resultName"></div>
+          <div class="card-task" id="resultTask"></div>
+          <div class="card-desc" id="resultDesc"></div>
+          <div class="card-reward">
+            <span class="reward-xp" id="resultXp"></span>
+            <span class="reward-gold" id="resultGold"></span>
+          </div>
+        </div>
+        <div class="action-btns">
+          <button class="btn btn-confirm" onclick="confirmTask()">✅ 确认任务</button>
+          <button class="btn btn-redraw" onclick="redraw()">🔄 再抽一次</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Page: 今日任务 ===== -->
+  <div class="page" id="page-task">
+    <div class="page-title">📋 今日任务</div>
+    <div class="page-subtitle" id="taskCount">0 个任务待完成</div>
+
+    <div id="taskList">
+      <div class="empty-state" id="emptyTasks">
+        <div class="emoji">🌟</div>
+        <div class="text">还没有今日任务哦～</div>
+        <div class="hint">先去转盘抽取角色卡吧！</div>
+      </div>
+    </div>
+
+    <div class="progress-card" id="progressCard" style="display:none;">
+      <div class="progress-header">
+        <span class="progress-title">完成进度</span>
+        <span class="progress-count" id="progressCount">0/0</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <div class="progress-total">
+        <span id="progressXP">累计经验: +0 XP</span>
+        <span id="progressGold">累计金币: +0 金币</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Page: 角色图鉴 ===== -->
+  <div class="page" id="page-collection">
+    <div class="page-title">📖 角色图鉴</div>
+    <div class="page-subtitle" id="collectionCount">已收集 0/0</div>
+    <div class="filter-bar">
+      <div class="filter-item active" onclick="filterCollection('all', this)">全部</div>
+      <div class="filter-item" onclick="filterCollection('little', this)">🌱 3-6岁</div>
+      <div class="filter-item" onclick="filterCollection('standard', this)">🌳 7-12岁</div>
+      <div class="filter-item" onclick="filterCollection('leader', this)">👑 进阶</div>
+    </div>
+    <div class="collection-grid" id="collectionGrid"></div>
+  </div>
+
+  <!-- ===== Page: 奖励商店 ===== -->
+  <div class="page" id="page-shop">
+    <div class="page-title">🏪 奖励商店</div>
+    <div class="page-subtitle" id="shopGold">金币: 0</div>
+    <div id="shopList"></div>
+  </div>
+
+  <!-- ===== Page: 成就 ===== -->
+  <div class="page" id="page-achievement">
+    <div class="page-title">🏆 成就</div>
+    <div class="page-subtitle" id="achCount">已解锁 0/0</div>
+    <div id="achievementList"></div>
+  </div>
+
+  <!-- ===== Tab Bar ===== -->
+  <div class="tab-bar">
+    <div class="tab-item active" onclick="switchTab('index')">
+      <span class="tab-icon">🎯</span>
+      <span class="tab-label">转盘抽奖</span>
+    </div>
+    <div class="tab-item" onclick="switchTab('task')">
+      <span class="tab-icon">📋</span>
+      <span class="tab-label">今日任务</span>
+    </div>
+    <div class="tab-item" onclick="switchTab('collection')">
+      <span class="tab-icon">📖</span>
+      <span class="tab-label">角色图鉴</span>
+    </div>
+    <div class="tab-item" onclick="switchTab('shop')">
+      <span class="tab-icon">🏪</span>
+      <span class="tab-label">奖励商店</span>
+    </div>
+    <div class="tab-item" onclick="switchTab('achievement')">
+      <span class="tab-icon">🏆</span>
+      <span class="tab-label">成就</span>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== Data =====
+const charSets = {
+  little: [
+    { id:'L01', name:'小草精灵', emoji:'🌱', task:'用湿巾擦拭低矮桌椅', desc:'用魔法湿巾给桌子洗个脸！', rarity:'N', xp:10, gold:5 },
+    { id:'L02', name:'微风清扫者', emoji:'🍃', task:'简单扫地', desc:'拿起小扫把，把落叶扫成一堆！', rarity:'N', xp:10, gold:5 },
+    { id:'L03', name:'水滴帮手', emoji:'💧', task:'饭后收拾碗筷放到水池', desc:'帮碗筷找到回家的路！', rarity:'N', xp:10, gold:5 },
+    { id:'L04', name:'餐桌小帮手', emoji:'🍽️', task:'饭前摆放餐具', desc:'给每个座位摆上碗筷！', rarity:'N', xp:10, gold:5 },
+    { id:'L05', name:'宠物小护士', emoji:'🐾', task:'给宠物添粮换水', desc:'小动物饿了，去照顾它们！', rarity:'N', xp:10, gold:5 },
+    { id:'L06', name:'软枕精灵', emoji:'🛏️', task:'帮忙整理床铺', desc:'把被子铺平，枕头放好！', rarity:'N', xp:10, gold:5 },
+    { id:'L07', name:'折叠小能手', emoji:'👕', task:'叠放自己的衣物', desc:'把衣服变得整整齐齐！', rarity:'N', xp:10, gold:5 },
+    { id:'L08', name:'明日准备师', emoji:'🌅', task:'准备第二天要穿的衣服', desc:'为明天的冒险选好装备！', rarity:'N', xp:10, gold:5 },
+    { id:'L09', name:'落叶搬运工', emoji:'🧹', task:'把垃圾放到垃圾桶', desc:'把垃圾送回它的家！', rarity:'N', xp:10, gold:5 },
+    { id:'L10', name:'浇水小园丁', emoji:'🌿', task:'给植物浇水', desc:'给小树喝水，让它长大！', rarity:'N', xp:10, gold:5 },
+    { id:'L11', name:'水果收集者', emoji:'🍎', task:'清洗简单的果蔬', desc:'给水果宝宝洗个澡！', rarity:'R', xp:25, gold:15 },
+    { id:'L12', name:'小火苗厨师', emoji:'🥚', task:'打鸡蛋/参与简单烘焙', desc:'在爸爸/妈妈帮助下打鸡蛋！', rarity:'R', xp:25, gold:15 }
+  ],
+  standard: [
+    { id:'S01', name:'智慧守护者', emoji:'📚', task:'自主整理书包', desc:'确保明天冒险的装备齐全！', rarity:'N', xp:10, gold:5 },
+    { id:'S02', name:'垃圾分类官', emoji:'🗑️', task:'垃圾分类+倒垃圾', desc:'将废弃物送入正确的传送门！', rarity:'N', xp:10, gold:5 },
+    { id:'S03', name:'房间守护者', emoji:'🏠', task:'定期打扫个人房间', desc:'让房间恢复到整洁状态！', rarity:'R', xp:25, gold:15 },
+    { id:'S04', name:'地面净化师', emoji:'🧹', task:'独立扫地拖地', desc:'消灭地面的灰尘怪物！', rarity:'R', xp:25, gold:15 },
+    { id:'S05', name:'碗碟骑士', emoji:'🍽️', task:'饭后洗碗筷', desc:'洗净每一件餐具！', rarity:'R', xp:25, gold:15 },
+    { id:'S06', name:'洗衣法师', emoji:'🧺', task:'学习使用洗衣机', desc:'操控魔法机器洗净衣物！', rarity:'R', xp:25, gold:15 },
+    { id:'S07', name:'火焰厨师', emoji:'🍚', task:'淘米/煮面条/做简单早餐', desc:'施展食物魔法！', rarity:'R', xp:25, gold:15 },
+    { id:'S08', name:'食材整理师', emoji:'🥦', task:'择菜/剥虾', desc:'准备烹饪的魔法原料！', rarity:'R', xp:25, gold:15 },
+    { id:'S09', name:'手洗战士', emoji:'🧺', task:'手洗简单衣物', desc:'用手的力量洗净衣物！', rarity:'R', xp:25, gold:15 },
+    { id:'S10', name:'电器操控者', emoji:'🔌', task:'使用吸尘器/电饭煲', desc:'掌握现代魔法器械！', rarity:'R', xp:25, gold:15 },
+    { id:'S11', name:'衣柜守卫者', emoji:'👔', task:'整理衣柜', desc:'让衣柜变成有序的宝库！', rarity:'R', xp:25, gold:15 },
+    { id:'S12', name:'过期清道夫', emoji:'🌸', task:'清理过期物品', desc:'识别并处理过期的物品！', rarity:'R', xp:25, gold:15 },
+    { id:'S13', name:'床铺大师', emoji:'🛌', task:'更换床单被罩', desc:'完成床铺的净化仪式！', rarity:'SR', xp:50, gold:30 }
+  ],
+  leader: [
+    { id:'L14', name:'财务官', emoji:'💰', task:'安排部分家庭财政', desc:'管理部落的金币，做出明智的决策！', rarity:'SR', xp:50, gold:30 },
+    { id:'L15', name:'探险规划师', emoji:'🗺️', task:'拟定家庭出游计划', desc:'规划部落的探险路线！', rarity:'SR', xp:50, gold:30 },
+    { id:'L16', name:'活动策划师', emoji:'📋', task:'组织家庭活动', desc:'策划让所有人快乐的冒险活动！', rarity:'SR', xp:50, gold:30 },
+    { id:'L17', name:'部落记录员', emoji:'📝', task:'记录家庭开支/购物清单', desc:'用魔法卷轴记录部落的一切！', rarity:'R', xp:25, gold:15 },
+    { id:'L18', name:'采购主管', emoji:'🛒', task:'帮忙列购物清单并采购', desc:'管理部落的物资补给！', rarity:'SR', xp:50, gold:30 },
+    { id:'L19', name:'知识探索者', emoji:'🌍', task:'学习新技能并分享', desc:'学习新的魔法并教给部落成员！', rarity:'R', xp:25, gold:15 }
+  ]
+};
+
+const levelConfig = [
+  { level:1, title:'见习冒险者', cxp:0 },
+  { level:2, title:'初级助手', cxp:50 },
+  { level:3, title:'中级助手', cxp:150 },
+  { level:4, title:'高级助手', cxp:300 },
+  { level:5, title:'森林骑士', cxp:500 },
+  { level:6, title:'精英骑士', cxp:800 },
+  { level:7, title:'森林领主', cxp:1200 },
+  { level:8, title:'传奇领主', cxp:1700 },
+  { level:9, title:'大魔法师', cxp:2400 },
+  { level:10, title:'传说英雄', cxp:3400 }
+];
+
+const aiTips = [
+  { knowledge:'你知道吗？植物喝水后会通过叶子"出汗"（蒸腾作用），就像小朋友运动后会出汗一样！', suggested:'浇水小园丁', msg:'🌿 今天森林长者说：植物们口渴啦！让「浇水小园丁」给它们送去生命之水吧！' },
+  { knowledge:'你知道吗？蚂蚁能搬运比自己重 50 倍的东西！它们是最小的"大力士"。', suggested:'落叶搬运工', msg:'🐜 森林长者说：小蚂蚁都能搬运大垃圾，你也能做个"落叶搬运工"！' },
+  { knowledge:'你知道吗？猫咪一天要睡 16 个小时，但它们醒着的时候总在"洗脸"整理自己。', suggested:'折叠小能手', msg:'🐱 森林长者说：猫咪那么爱干净，你也能把衣服叠得整整齐齐！' },
+  { knowledge:'你知道吗？蜜蜂跳"8字舞"来告诉同伴花蜜在哪里，它们用跳舞来 communication！', suggested:'火焰厨师', msg:'🐝 森林长者说：蜜蜂们忙着采蜜，厨房也需要你的帮助！今天来当「火焰厨师」！' },
+  { knowledge:'你知道吗？海豚睡觉时只闭一只眼睛，另一半大脑还在工作！', suggested:'智慧守护者', msg:'🐬 森林长者说：聪明的海豚也知道提前准备好明天要用的东西！' },
+  { knowledge:'你知道吗？蝴蝶用脚来"尝"味道，它们站在花朵上就能知道花蜜甜不甜！', suggested:'水果收集者', msg:'🦋 森林长者说：蝴蝶用脚尝味道，你也能用小手来给水果洗澡！' },
+  { knowledge:'你知道吗？大象会用鼻子吸水然后喷在身上洗澡，它们是最聪明的"自助洗车"！', suggested:'小草精灵', msg:'🐘 森林长者说：大象自己会洗澡，你也能用湿巾给桌子"洗个脸"！' },
+  { knowledge:'你知道吗？企鹅会互相赠送光滑的石头来表达友好，它们是最浪漫的"送礼达人"。', suggested:'宠物小护士', msg:'🐧 森林长者说：企鹅给同伴送石头，你也可以给宠物送食物和水呀！' }
+];
+
+const shopItems = [
+  { icon:'🎁', name:'指定角色卡', desc:'下次抽取必得指定稀有度', price:100 },
+  { icon:'🍬', name:'零食奖励', desc:'向家长申请一份小零食', price:50 },
+  { icon:'📺', name:'30分钟娱乐时间', desc:'额外观看30分钟动画', price:80 },
+  { icon:'🧸', name:'小玩具', desc:'选择一个喜欢的玩具', price:150 },
+  { icon:'🎫', name:'周末特权卡', desc:'可以决定一个家庭活动', price:200 }
+];
+
+const achievements = [
+  { id:'collect_N', icon:'🌿', name:'初级收集家', desc:'集齐所有N卡', reward:50 },
+  { id:'collect_R', icon:'💎', name:'中级收集家', desc:'集齐所有R卡', reward:100 },
+  { id:'collect_SR', icon:'👑', name:'终极收集家', desc:'集齐所有SR卡', reward:200 },
+  { id:'finish_50', icon:'🐝', name:'勤劳小蜜蜂', desc:'完成50个任务', reward:30 },
+  { id:'finish_100', icon:'⭐', name:'家务小能手', desc:'完成100个任务', reward:50 },
+  { id:'finish_200', icon:'🏆', name:'家务大师', desc:'完成200个任务', reward:100 },
+  { id:'nature', icon:'🌱', name:'自然之友', desc:'完成所有植物相关任务', reward:30 },
+  { id:'clean', icon:'✨', name:'整洁卫士', desc:'完成所有清洁整理任务', reward:30 },
+  { id:'kitchen', icon:'🍳', name:'厨房之星', desc:'完成所有厨房相关任务', reward:30 },
+  { id:'clothes', icon:'👔', name:'自理达人', desc:'完成所有衣物整理任务', reward:30 }
+];
+
+// ===== Player State =====
+let player = {
+  level: 1,
+  totalXp: 0,
+  gold: 0,
+  consecutiveDays: 3,
+  collected: [],
+  todayTasks: [],
+  completedCount: 0
+};
+
+let selectedAge = 'little';
+let isSpinning = false;
+let currentCard = null;
+
+// ===== Init =====
+function init() {
+  loadPlayer();
+  updateUI();
+  initAI();
+  drawWheel();
+  renderCollection();
+  renderShop();
+  renderAchievements();
+}
+
+function loadPlayer() {
+  const saved = localStorage.getItem('forestQuest');
+  if (saved) {
+    player = JSON.parse(saved);
+  }
+}
+
+function savePlayer() {
+  localStorage.setItem('forestQuest', JSON.stringify(player));
+}
+
+// ===== AI =====
+function initAI() {
+  const today = new Date();
+  const dayIndex = today.getMonth() * 31 + today.getDate();
+  const tip = aiTips[dayIndex % aiTips.length];
+  document.getElementById('aiMessage').textContent = tip.msg;
+  document.getElementById('aiKnowledge').textContent = '💡 ' + tip.knowledge;
+}
+
+// ===== Tab Switch =====
+function switchTab(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  event.currentTarget.classList.add('active');
+  
+  if (page === 'task') renderTasks();
+  if (page === 'collection') renderCollection();
+}
+
+// ===== Age Select =====
+function selectAge(age) {
+  selectedAge = age;
+  document.querySelectorAll('.age-option').forEach(el => {
+    el.classList.toggle('active', el.dataset.age === age);
+  });
+  document.getElementById('resultSection').classList.remove('show');
+  document.getElementById('wheelSection').style.display = 'flex';
+  drawWheel();
+}
+
+// ===== Wheel Draw =====
+function drawWheel() {
+  const canvas = document.getElementById('wheelCanvas');
+  const ctx = canvas.getContext('2d');
+  const chars = charSets[selectedAge];
+  const size = 600;
+  const cx = size / 2;
+  const cy = size / 2;
+  const r = size / 2 - 20;
+  const n = chars.length;
+  const angle = (2 * Math.PI) / n;
+  
+  const colors = ['#EAF3DE','#C0DD97','#E6F1FB','#B5D4F4','#FAEEDA','#FAC775'];
+  
+  ctx.clearRect(0, 0, size, size);
+  
+  for (let i = 0; i < n; i++) {
+    const start = i * angle;
+    const end = start + angle;
+    
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, start, end);
+    ctx.closePath();
+    ctx.fillStyle = colors[i % colors.length];
+    ctx.fill();
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    
+    const mid = start + angle / 2;
+    const ex = cx + Math.cos(mid) * (r * 0.6);
+    const ey = cy + Math.sin(mid) * (r * 0.6);
+    ctx.font = '28px serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(chars[i].emoji, ex, ey);
+  }
+  
+  // Center circle
+  ctx.beginPath();
+  ctx.arc(cx, cy, 36, 0, 2 * Math.PI);
+  ctx.fillStyle = '#fff';
+  ctx.fill();
+  ctx.strokeStyle = '#639922';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+}
+
+// ===== Spin Wheel =====
+function spinWheel() {
+  if (isSpinning) return;
+  isSpinning = true;
+  document.getElementById('drawBtn').disabled = true;
+  document.getElementById('drawBtn').textContent = '🎰 抽取中...';
+  
+  const chars = charSets[selectedAge];
+  
+  // Rarity roll
+  const roll = Math.random() * 100;
+  let rarity;
+  if (selectedAge === 'little') {
+    rarity = roll < 90 ? 'N' : 'R';
+  } else if (selectedAge === 'leader') {
+    rarity = roll < 30 ? 'N' : roll < 70 ? 'R' : 'SR';
+  } else {
+    rarity = roll < 60 ? 'N' : roll < 90 ? 'R' : 'SR';
+  }
+  
+  const candidates = chars.filter(c => c.rarity === rarity);
+  currentCard = candidates[Math.floor(Math.random() * candidates.length)];
+  
+  // Rotate
+  const canvas = document.getElementById('wheelCanvas');
+  const rotations = 3 + Math.random() * 2;
+  const randomAngle = Math.random() * 360;
+  const totalRotation = rotations * 360 + randomAngle;
+  canvas.style.transform = `rotate(${totalRotation}deg)`;
+  
+  setTimeout(() => {
+    isSpinning = false;
+    document.getElementById('drawBtn').disabled = false;
+    document.getElementById('drawBtn').textContent = '🎯 开始抽取';
+    showResult();
+  }, 3200);
+}
+
+// ===== Show Result =====
+function showResult() {
+  document.getElementById('wheelSection').style.display = 'none';
+  const section = document.getElementById('resultSection');
+  section.classList.add('show');
+  
+  const card = document.getElementById('resultCard');
+  card.className = 'game-card ' + currentCard.rarity;
+  
+  document.getElementById('resultRarity').textContent = currentCard.rarity;
+  document.getElementById('resultEmoji').textContent = currentCard.emoji;
+  document.getElementById('resultName').textContent = currentCard.name;
+  document.getElementById('resultTask').textContent = currentCard.task;
+  document.getElementById('resultDesc').textContent = currentCard.desc;
+  document.getElementById('resultXp').textContent = '⭐ +' + currentCard.xp + ' 经验';
+  document.getElementById('resultGold').textContent = '🪙 +' + currentCard.gold + ' 金币';
+  
+  // Add to today tasks
+  if (!player.todayTasks.find(t => t.id === currentCard.id)) {
+    player.todayTasks.push({ ...currentCard, completed: false });
+  }
+  savePlayer();
+}
+
+// ===== Confirm Task =====
+function confirmTask() {
+  if (!currentCard) return;
+  
+  // Add XP and Gold
+  player.totalXp += currentCard.xp;
+  player.gold += currentCard.gold;
+  player.completedCount++;
+  
+  // Check level up
+  for (let i = levelConfig.length - 1; i >= 0; i--) {
+    if (player.totalXp >= levelConfig[i].cxp && player.level < levelConfig[i].level) {
+      player.level = levelConfig[i].level;
+      showToast('🎉 升级！现在是 ' + levelConfig[i].title);
+      break;
+    }
+  }
+  
+  // Track collected
+  if (!player.collected.includes(currentCard.id)) {
+    player.collected.push(currentCard.id);
+  }
+  
+  // Complete task
+  const task = player.todayTasks.find(t => t.id === currentCard.id);
+  if (task) task.completed = true;
+  
+  savePlayer();
+  updateUI();
+  
+  showToast('✅ 任务确认！+' + currentCard.xp + ' XP +' + currentCard.gold + ' 金币');
+  
+  setTimeout(() => {
+    document.getElementById('resultSection').classList.remove('show');
+    document.getElementById('wheelSection').style.display = 'flex';
+  }, 1000);
+}
+
+// ===== Redraw =====
+function redraw() {
+  document.getElementById('resultSection').classList.remove('show');
+  document.getElementById('wheelSection').style.display = 'flex';
+  const canvas = document.getElementById('wheelCanvas');
+  canvas.style.transition = 'none';
+  canvas.style.transform = 'rotate(0deg)';
+  setTimeout(() => { canvas.style.transition = 'transform 3s cubic-bezier(0.17, 0.67, 0.12, 0.99)'; }, 50);
+}
+
+// ===== Render Tasks =====
+function renderTasks() {
+  const list = document.getElementById('taskList');
+  const empty = document.getElementById('emptyTasks');
+  const progressCard = document.getElementById('progressCard');
+  
+  if (player.todayTasks.length === 0) {
+    list.innerHTML = '';
+    list.appendChild(empty);
+    empty.style.display = 'flex';
+    progressCard.style.display = 'none';
+    document.getElementById('taskCount').textContent = '0 个任务待完成';
+    return;
+  }
+  
+  empty.style.display = 'none';
+  list.innerHTML = '';
+  
+  let completedCount = 0;
+  let totalXP = 0;
+  let totalGold = 0;
+  
+  player.todayTasks.forEach((task, idx) => {
+    if (task.completed) {
+      completedCount++;
+      totalXP += task.xp;
+      totalGold += task.gold;
+    }
+    
+    const card = document.createElement('div');
+    card.className = 'task-card' + (task.completed ? ' completed' : '');
+    card.innerHTML = `
+      <div class="task-emoji">${task.emoji}</div>
+      <div class="task-content">
+        <div class="task-header">
+          <span class="task-name">${task.name}</span>
+          <span class="rarity-tag ${task.rarity}">${task.rarity}</span>
+        </div>
+        <div class="task-task">${task.task}</div>
+        <div class="task-desc">${task.desc}</div>
+        <div class="task-reward">
+          <span style="color:var(--green-600)">⭐ ${task.xp} XP</span>
+          <span style="color:var(--amber-600)">🪙 ${task.gold} 金币</span>
+        </div>
+      </div>
+      <div class="check-btn ${task.completed ? 'checked' : ''}" onclick="toggleTask(${idx})">
+        <span class="check-icon">${task.completed ? '✓' : ''}</span>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+  
+  document.getElementById('taskCount').textContent = (player.todayTasks.length - completedCount) + ' 个任务待完成';
+  
+  progressCard.style.display = 'block';
+  const progress = player.todayTasks.length > 0 ? Math.round((completedCount / player.todayTasks.length) * 100) : 0;
+  document.getElementById('progressCount').textContent = completedCount + '/' + player.todayTasks.length;
+  document.getElementById('progressFill').style.width = progress + '%';
+  document.getElementById('progressXP').textContent = '累计经验: +' + totalXP + ' XP';
+  document.getElementById('progressGold').textContent = '累计金币: +' + totalGold + ' 金币';
+}
+
+function toggleTask(idx) {
+  const task = player.todayTasks[idx];
+  task.completed = !task.completed;
+  savePlayer();
+  renderTasks();
+  
+  if (task.completed) {
+    player.totalXp += task.xp;
+    player.gold += task.gold;
+    savePlayer();
+    updateUI();
+  }
+}
+
+// ===== Render Collection =====
+let currentFilter = 'all';
+
+function renderCollection(filter) {
+  if (filter !== undefined) currentFilter = filter;
+  
+  const grid = document.getElementById('collectionGrid');
+  grid.innerHTML = '';
+  
+  let allChars = [];
+  if (currentFilter === 'all') {
+    allChars = [...charSets.little, ...charSets.standard, ...charSets.leader];
+  } else {
+    allChars = charSets[currentFilter];
+  }
+  
+  document.getElementById('collectionCount').textContent = '已收集 ' + player.collected.length + '/' + allChars.length;
+  
+  allChars.forEach(char => {
+    const collected = player.collected.includes(char.id);
+    const card = document.createElement('div');
+    card.className = 'collection-card ' + char.rarity + (collected ? ' collected' : ' hidden');
+    card.innerHTML = `
+      <div class="card-emoji">${collected ? char.emoji : '❓'}</div>
+      <div class="card-name">${collected ? char.name : '未收集'}</div>
+      <span class="rarity-badge">${char.rarity}</span>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function filterCollection(filter, el) {
+  currentFilter = filter;
+  document.querySelectorAll('#page-collection .filter-item').forEach(f => f.classList.remove('active'));
+  el.classList.add('active');
+  renderCollection();
+}
+
+// ===== Render Shop =====
+function renderShop() {
+  document.getElementById('shopGold').textContent = '金币: ' + player.gold;
+  const list = document.getElementById('shopList');
+  list.innerHTML = '';
+  
+  shopItems.forEach((item, idx) => {
+    const el = document.createElement('div');
+    el.className = 'shop-item';
+    el.innerHTML = `
+      <div class="shop-icon">${item.icon}</div>
+      <div class="shop-info">
+        <div class="shop-name">${item.name}</div>
+        <div class="shop-desc">${item.desc}</div>
+      </div>
+      <button class="shop-price" onclick="buyItem(${idx})">🪙 ${item.price}</button>
+    `;
+    list.appendChild(el);
+  });
+}
+
+function buyItem(idx) {
+  const item = shopItems[idx];
+  if (player.gold < item.price) {
+    showToast('❌ 金币不足！需要 ' + item.price + ' 金币');
+    return;
+  }
+  player.gold -= item.price;
+  savePlayer();
+  renderShop();
+  updateUI();
+  showToast('🎉 兑换成功：' + item.name);
+}
+
+// ===== Render Achievements =====
+function renderAchievements() {
+  const list = document.getElementById('achievementList');
+  list.innerHTML = '';
+  
+  let unlocked = 0;
+  
+  achievements.forEach(ach => {
+    // Simple unlock logic for demo
+    const isUnlocked = player.completedCount >= 1;
+    if (isUnlocked) unlocked++;
+    
+    const el = document.createElement('div');
+    el.className = 'achievement-card' + (isUnlocked ? '' : ' locked');
+    el.innerHTML = `
+      <div class="achievement-icon">${ach.icon}</div>
+      <div class="achievement-info">
+        <div class="achievement-name">${ach.name}</div>
+        <div class="achievement-desc">${ach.desc}</div>
+        <div class="achievement-reward">🪙 ${ach.reward} 金币</div>
+      </div>
+    `;
+    list.appendChild(el);
+  });
+  
+  document.getElementById('achCount').textContent = '已解锁 ' + unlocked + '/' + achievements.length;
+}
+
+// ===== Update UI =====
+function updateUI() {
+  const levelInfo = levelConfig.find(l => l.level === player.level) || levelConfig[0];
+  document.getElementById('levelTitle').textContent = levelInfo.title;
+  document.getElementById('levelNum').textContent = 'Lv.' + player.level;
+  document.getElementById('totalXp').textContent = player.totalXp;
+  document.getElementById('goldNum').textContent = player.gold;
+  document.getElementById('consecDays').textContent = player.consecutiveDays;
+}
+
+// ===== Toast =====
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+// ===== Start =====
+init();
+</script>
+</body>
+</html>

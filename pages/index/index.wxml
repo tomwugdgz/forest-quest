@@ -1,0 +1,99 @@
+<!--pages/index/index.wxml-->
+<view class="container">
+  <!-- 顶部玩家信息 -->
+  <view class="player-header">
+    <view class="level-info">
+      <text class="level-badge">{{levelTitle}}</text>
+      <text class="level-num">Lv.{{playerData.level}}</text>
+    </view>
+    <view class="stats">
+      <view class="stat-item">
+        <text class="stat-icon">⭐</text>
+        <text class="stat-value">{{playerData.totalXp + playerData.currentXp}}</text>
+        <text class="stat-label">经验</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-icon">🪙</text>
+        <text class="stat-value">{{playerData.gold}}</text>
+        <text class="stat-label">金币</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-icon">🔥</text>
+        <text class="stat-value">{{playerData.consecutiveDays}}</text>
+        <text class="stat-label">连续签到</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 年龄选择 -->
+  <view class="age-selector">
+    <view class="age-option {{selectedAge === 'little' ? 'active' : ''}}" bindtap="selectAge" data-age="little">
+      <text class="age-emoji">🌱</text>
+      <text class="age-text">3-6岁</text>
+    </view>
+    <view class="age-option {{selectedAge === 'standard' ? 'active' : ''}}" bindtap="selectAge" data-age="standard">
+      <text class="age-emoji">🌳</text>
+      <text class="age-text">7-12岁</text>
+    </view>
+    <view class="age-option {{selectedAge === 'leader' ? 'active' : ''}}" bindtap="selectAge" data-age="leader">
+      <text class="age-emoji">👑</text>
+      <text class="age-text">9-12岁进阶</text>
+    </view>
+  </view>
+
+  <!-- 轮盘抽奖区域 -->
+  <view class="wheel-section" wx:if="{{!showResult}}">
+    <view class="wheel-container">
+      <canvas 
+        canvas-id="wheelCanvas" 
+        class="wheel-canvas" 
+        style="width: 600rpx; height: 600rpx;"
+      ></canvas>
+      <view class="wheel-pointer">🌟</view>
+    </view>
+    <view class="draw-btn {{isSpinning ? 'disabled' : ''}}" bindtap="spinWheel">
+      <text>{{isSpinning ? '抽取中...' : '开始抽取'}}</text>
+    </view>
+  </view>
+
+  <!-- 结果展示 -->
+  <view class="result-section" wx:if="{{showResult}}">
+    <view class="card-reveal {{revealing ? 'revealing' : ''}}">
+      <view class="card {{selectedCard.rarity}}">
+        <view class="card-header">
+          <text class="rarity-badge">{{selectedCard.rarity}}</text>
+        </view>
+        <view class="card-emoji">{{selectedCard.emoji}}</view>
+        <view class="card-name">{{selectedCard.name}}</view>
+        <view class="card-task">{{selectedCard.task}}</view>
+        <view class="card-desc">{{selectedCard.description}}</view>
+        <view class="card-reward">
+          <text class="reward-xp">⭐ +{{selectedCard.xp}}经验</text>
+          <text class="reward-gold">🪙 +{{selectedCard.gold}}金币</text>
+        </view>
+      </view>
+      <view class="action-btns">
+        <view class="btn btn-confirm" bindtap="confirmTask">
+          <text>确认任务 ✓</text>
+        </view>
+        <view class="btn btn-redraw" bindtap="redraw">
+          <text>再抽一次</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 签到弹窗 -->
+  <view class="modal-overlay" wx:if="{{showCheckInModal}}" bindtap="closeCheckInModal">
+    <view class="modal checkin-modal" catchtap="">
+      <view class="modal-title">🌲 每日签到</view>
+      <view class="checkin-reward">
+        <text class="reward-text">签到奖励：🪙 +{{checkInReward}}金币</text>
+        <text class="consecutive-text">连续签到：{{checkInConsecutive}}天</text>
+      </view>
+      <view class="modal-btn" bindtap="closeCheckInModal">
+        <text>太棒了！</text>
+      </view>
+    </view>
+  </view>
+</view>

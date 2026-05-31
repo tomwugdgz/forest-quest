@@ -1,0 +1,126 @@
+<!--pages/parent/parent.wxml-->
+<view class="container">
+  <!-- 登录区域 -->
+  <view class="login-panel" wx:if="{{!isLoggedIn}}">
+    <text class="login-title">🔐 家长控制中心</text>
+    <text class="login-desc">请输入家长密码进行设置</text>
+    <view class="password-input">
+      <input type="text" password="{{true}}" placeholder="输入4位密码" bindinput="onPasswordInput" maxlength="4" class="password-field" />
+    </view>
+    <view class="login-btn" bindtap="login">
+      <text>进入设置</text>
+    </view>
+    <text class="login-hint">默认密码：1234</text>
+  </view>
+
+  <!-- 设置面板 -->
+  <view class="settings-panel" wx:if="{{isLoggedIn}}">
+    <view class="header">
+      <text class="title">⚙️ 家长控制中心</text>
+      <view class="logout-btn" bindtap="logout">
+        <text>退出</text>
+      </view>
+    </view>
+
+    <!-- 孩子选择 -->
+    <view class="section">
+      <text class="section-title">👤 当前孩子</text>
+      <view class="child-selector">
+        <view class="child-tab {{currentChild === 'child1' ? 'active' : ''}}" bindtap="switchChild" data-child="child1">
+          <text>孩子A</text>
+        </view>
+        <view class="child-tab {{currentChild === 'child2' ? 'active' : ''}}" bindtap="switchChild" data-child="child2">
+          <text>孩子B</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 年龄设置 -->
+    <view class="section">
+      <text class="section-title">📅 年龄段设置</text>
+      <view class="age-selector">
+        <view class="age-tab {{userData.ageGroup === 'little' ? 'active' : ''}}" bindtap="setAgeGroup" data-age="little">
+          <text>🌱 3-6岁</text>
+        </view>
+        <view class="age-tab {{userData.ageGroup === 'standard' ? 'active' : ''}}" bindtap="setAgeGroup" data-age="standard">
+          <text>🌳 7-12岁</text>
+        </view>
+        <view class="age-tab {{userData.ageGroup === 'leader' ? 'active' : ''}}" bindtap="setAgeGroup" data-age="leader">
+          <text>👑 进阶</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 每日任务数量 -->
+    <view class="section">
+      <text class="section-title">🎯 每日任务数</text>
+      <view class="slider-section">
+        <slider value="{{dailyTaskCount}}" min="1" max="5" step="1" show-value block-size="20" activeColor="#639922" bindchange="onTaskCountChange" />
+        <text class="slider-hint">每天抽 {{dailyTaskCount}} 张任务卡</text>
+      </view>
+    </view>
+
+    <!-- 奖励倍率 -->
+    <view class="section">
+      <text class="section-title">💰 金币倍率</text>
+      <view class="multiplier-selector">
+        <view class="mult-tab {{goldMultiplier === 1 ? 'active' : ''}}" bindtap="setMultiplier" data-mult="1">
+          <text>1x 标准</text>
+        </view>
+        <view class="mult-tab {{goldMultiplier === 1.5 ? 'active' : ''}}" bindtap="setMultiplier" data-mult="1.5">
+          <text>1.5x 鼓励</text>
+        </view>
+        <view class="mult-tab {{goldMultiplier === 2 ? 'active' : ''}}" bindtap="setMultiplier" data-mult="2">
+          <text>2x 激励</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 密码修改 -->
+    <view class="section">
+      <text class="section-title">🔑 修改密码</text>
+      <view class="change-password">
+        <input type="text" password="{{true}}" placeholder="新密码(4位)" maxlength="4" bindinput="onNewPasswordInput" class="password-field-sm" />
+        <view class="change-btn" bindtap="changePassword">
+          <text>修改</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 数据管理 -->
+    <view class="section">
+      <text class="section-title">📊 数据管理</text>
+      <view class="data-actions">
+        <view class="action-btn action-btn-warning" bindtap="resetDaily">
+          <text>🔄 重置今日任务</text>
+        </view>
+        <view class="action-btn action-btn-danger" bindtap="resetAll">
+          <text>⚠️ 重置全部进度</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 统计面板 -->
+    <view class="section">
+      <text class="section-title">📈 数据统计</text>
+      <view class="stats-grid">
+        <view class="stat-card">
+          <text class="stat-value">{{stats.level}}</text>
+          <text class="stat-label">等级</text>
+        </view>
+        <view class="stat-card">
+          <text class="stat-value">{{stats.totalTasks}}</text>
+          <text class="stat-label">完成任务</text>
+        </view>
+        <view class="stat-card">
+          <text class="stat-value">{{stats.collected}}</text>
+          <text class="stat-label">已收集角色</text>
+        </view>
+        <view class="stat-card">
+          <text class="stat-value">{{stats.streak}}</text>
+          <text class="stat-label">连续天数</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

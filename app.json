@@ -1,0 +1,46 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/task/task",
+    "pages/collection/collection",
+    "pages/shop/shop",
+    "pages/achievement/achievement",
+    "pages/parent/parent"
+  ],
+  "window": {
+    "navigationBarTitleText": "森林冒险家园",
+    "navigationBarBackgroundColor": "#639922",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#EAF3DE",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#888780",
+    "selectedColor": "#639922",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "转盘抽奖"
+      },
+      {
+        "pagePath": "pages/task/task",
+        "text": "今日任务"
+      },
+      {
+        "pagePath": "pages/collection/collection",
+        "text": "角色图鉴"
+      },
+      {
+        "pagePath": "pages/shop/shop",
+        "text": "奖励商店"
+      },
+      {
+        "pagePath": "pages/achievement/achievement",
+        "text": "成就"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json"
+}

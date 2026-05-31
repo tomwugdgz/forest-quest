@@ -1,0 +1,81 @@
+<!--pages/task/task.wxml-->
+<view class="container">
+  <!-- 今日任务列表 -->
+  <view class="section-title">
+    <text>📋 今日任务</text>
+    <text class="section-sub">{{tasks.length}} 个任务待完成</text>
+  </view>
+
+  <view class="task-list" wx:if="{{tasks.length > 0}}">
+    <view class="task-card {{task.completed ? 'completed' : ''}}" wx:for="{{tasks}}" wx:key="id">
+      <view class="task-left">
+        <text class="task-emoji">{{task.emoji}}</text>
+      </view>
+      <view class="task-content">
+        <view class="task-header">
+          <text class="task-name">{{task.name}}</text>
+          <view class="rarity-tag {{task.rarity}}">{{task.rarity}}</view>
+        </view>
+        <text class="task-task">{{task.task}}</text>
+        <text class="task-desc">{{task.description}}</text>
+        <view class="task-reward">
+          <text class="reward">⭐ {{task.xp}} XP</text>
+          <text class="reward">🪙 {{task.gold}} 金币</text>
+        </view>
+      </view>
+      <view class="task-right">
+        <view class="check-btn {{task.completed ? 'checked' : ''}}" bindtap="toggleTask" data-id="{{task.id}}">
+          <text class="check-icon">{{task.completed ? '✓' : ''}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:else>
+    <text class="empty-emoji">🌟</text>
+    <text class="empty-text">还没有今日任务哦～</text>
+    <text class="empty-hint">先去转盘抽取角色卡吧！</text>
+    <view class="go-draw-btn" bindtap="goToDraw">
+      <text>去抽取</text>
+    </view>
+  </view>
+
+  <!-- 完成统计 -->
+  <view class="stats-card" wx:if="{{tasks.length > 0}}">
+    <view class="stats-header">
+      <text class="stats-title">完成进度</text>
+      <text class="stats-count">{{completedCount}} / {{tasks.length}}</text>
+    </view>
+    <view class="progress-bar">
+      <view class="progress-fill" style="width: {{progress}}%;"></view>
+    </view>
+    <view class="stats-total">
+      <text class="total-xp">累计经验: +{{totalXP}} XP</text>
+      <text class="total-gold">累计金币: +{{totalGold}} 金币</text>
+    </view>
+  </view>
+
+  <!-- 完成日期选择 -->
+  <view class="date-section">
+    <view class="date-nav">
+      <view class="date-btn" bindtap="prevDay">
+        <text>◀</text>
+      </view>
+      <text class="date-text">{{currentDate}}</text>
+      <view class="date-btn" bindtap="nextDay" wx:if="{{!isToday}}">
+        <text>▶</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 历史完成记录 -->
+  <view class="section-title">
+    <text>📅 完成记录</text>
+  </view>
+  <view class="history-list" wx:if="{{history.length > 0}}">
+    <view class="history-item" wx:for="{{history}}" wx:key="date">
+      <text class="history-date">{{date}}</text>
+      <text class="history-count">完成 {{item.count}} 个任务，获得 {{item.totalXp}} XP</text>
+    </view>
+  </view>
+</view>

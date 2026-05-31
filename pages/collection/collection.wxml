@@ -1,0 +1,69 @@
+<!--pages/collection/collection.wxml-->
+<view class="container">
+  <view class="header">
+    <text class="title">📖 角色图鉴</text>
+    <text class="count">已收集 {{collectedCount}}/{{totalCount}}</text>
+  </view>
+
+  <!-- 年龄段筛选 -->
+  <view class="filter-bar">
+    <view class="filter-item {{currentFilter === 'all' ? 'active' : ''}}" bindtap="filterAge" data-filter="all">
+      <text>全部</text>
+    </view>
+    <view class="filter-item {{currentFilter === 'little' ? 'active' : ''}}" bindtap="filterAge" data-filter="little">
+      <text>🌱 3-6岁</text>
+    </view>
+    <view class="filter-item {{currentFilter === 'standard' ? 'active' : ''}}" bindtap="filterAge" data-filter="standard">
+      <text>🌳 7-12岁</text>
+    </view>
+    <view class="filter-item {{currentFilter === 'leader' ? 'active' : ''}}" bindtap="filterAge" data-filter="leader">
+      <text>👑 进阶</text>
+    </view>
+  </view>
+
+  <!-- 稀有度筛选 -->
+  <view class="rarity-filter">
+    <view class="rarity-item {{rarityFilter === 'all' ? 'active' : ''}}" bindtap="filterRarity" data-rarity="all">
+      <text>全部</text>
+    </view>
+    <view class="rarity-item {{rarityFilter === 'N' ? 'active' : ''}}" bindtap="filterRarity" data-rarity="N">
+      <text class="n-dot">●</text> N
+    </view>
+    <view class="rarity-item {{rarityFilter === 'R' ? 'active' : ''}}" bindtap="filterRarity" data-rarity="R">
+      <text class="r-dot">●</text> R
+    </view>
+    <view class="rarity-item {{rarityFilter === 'SR' ? 'active' : ''}}" bindtap="filterRarity" data-rarity="SR">
+      <text class="sr-dot">●</text> SR
+    </view>
+  </view>
+
+  <!-- 角色卡网格 -->
+  <view class="collection-grid">
+    <view class="collection-card {{card.collected ? 'collected' : 'hidden'}}" wx:for="{{filteredCards}}" wx:key="id" bindtap="showCardDetail" data-card="{{card}}">
+      <view class="card-emoji {{card.collected ? '' : 'blurred'}}">{{card.collected ? card.emoji : '❓'}}</view>
+      <text class="card-name {{card.collected ? '' : 'blurred'}}">{{card.collected ? card.name : '未收集'}}</text>
+      <view class="rarity-badge {{card.rarity}}">{{card.rarity}}</view>
+    </view>
+  </view>
+</view>
+
+<!-- 角色详情弹窗 -->
+<view class="modal-overlay" wx:if="{{showDetail}}" bindtap="closeDetail">
+  <view class="modal card-detail" catchtap="">
+    <text class="detail-emoji">{{detailCard.emoji}}</text>
+    <text class="detail-name">{{detailCard.name}}</text>
+    <view class="detail-rarity {{detailCard.rarity}}">{{detailCard.rarity}} - {{detailCard.task}}</view>
+    <text class="detail-desc">{{detailCard.description}}</text>
+    <view class="detail-reward">
+      <text>⭐ {{detailCard.xp}} XP</text>
+      <text>🪙 {{detailCard.gold}} 金币</text>
+    </view>
+    <view class="detail-status">
+      <text wx:if="{{detailCard.collected}}" class="collected-text">✅ 已收集</text>
+      <text wx:else class="not-collected-text">❌ 还未收集，去转盘抽奖吧！</text>
+    </view>
+    <view class="modal-close" bindtap="closeDetail">
+      <text>关闭</text>
+    </view>
+  </view>
+</view>

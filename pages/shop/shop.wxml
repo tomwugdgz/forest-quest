@@ -1,0 +1,56 @@
+<!--pages/shop/shop.wxml-->
+<view class="container">
+  <view class="header">
+    <text class="title">🏪 奖励商店</text>
+    <view class="gold-balance">
+      <text>🪙 {{gold}}</text>
+    </view>
+  </view>
+
+  <view class="section-title">
+    <text>🎁 可用奖励</text>
+  </view>
+
+  <view class="shop-list">
+    <view class="shop-item" wx:for="{{shopItems}}" wx:key="id" bindtap="buyItem" data-item="{{item}}">
+      <view class="item-icon">{{item.icon}}</view>
+      <view class="item-info">
+        <text class="item-name">{{item.name}}</text>
+        <text class="item-desc">{{item.description}}</text>
+      </view>
+      <view class="item-price {{gold >= item.cost ? 'affordable' : 'expensive'}}">
+        <text>🪙 {{item.cost}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 已兑换记录 -->
+  <view class="section-title" wx:if="{{redeemedItems.length > 0}}">
+    <text>📦 已兑换</text>
+  </view>
+  <view class="redeemed-list" wx:if="{{redeemedItems.length > 0}}">
+    <view class="redeemed-item" wx:for="{{redeemedItems}}" wx:key="id">
+      <text class="redeemed-icon">{{item.icon}}</text>
+      <text class="redeemed-name">{{item.name}}</text>
+      <text class="redeemed-time">{{item.time}}</text>
+    </view>
+  </view>
+</view>
+
+<!-- 购买确认弹窗 -->
+<view class="modal-overlay" wx:if="{{showConfirm}}" bindtap="cancelBuy">
+  <view class="modal buy-confirm" catchtap="">
+    <text class="confirm-icon">{{confirmItem.icon}}</text>
+    <text class="confirm-name">{{confirmItem.name}}</text>
+    <text class="confirm-desc">{{confirmItem.description}}</text>
+    <text class="confirm-price">花费 🪙 {{confirmItem.cost}}？</text>
+    <view class="confirm-actions">
+      <view class="btn-cancel" bindtap="cancelBuy">
+        <text>取消</text>
+      </view>
+      <view class="btn-confirm" bindtap="confirmBuy">
+        <text>确认兑换</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,338 @@
+/* pages/index/index.wxss */
+.container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #EAF3DE 0%, #E6F1FB 100%);
+  padding: 20rpx 30rpx;
+}
+
+/* 玩家信息头部 */
+.player-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 24rpx 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(99, 153, 34, 0.1);
+}
+
+.level-info {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.level-badge {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #639922;
+}
+
+.level-num {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #27500A;
+}
+
+.stats {
+  display: flex;
+  gap: 24rpx;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-icon {
+  font-size: 32rpx;
+}
+
+.stat-value {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #5F5E5A;
+}
+
+.stat-label {
+  font-size: 22rpx;
+  color: #B4B2A9;
+}
+
+/* 年龄选择器 */
+.age-selector {
+  display: flex;
+  justify-content: center;
+  gap: 20rpx;
+  margin-bottom: 30rpx;
+}
+
+.age-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx 28rpx;
+  border-radius: 20rpx;
+  background: #fff;
+  border: 2rpx solid #EAF3DE;
+  transition: all 0.3s;
+}
+
+.age-option.active {
+  background: #639922;
+  border-color: #3B6D11;
+}
+
+.age-option.active .age-text {
+  color: #fff;
+}
+
+.age-emoji {
+  font-size: 48rpx;
+  margin-bottom: 8rpx;
+}
+
+.age-text {
+  font-size: 24rpx;
+  color: #5F5E5A;
+  font-weight: 500;
+}
+
+/* 轮盘区域 */
+.wheel-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx 0;
+}
+
+.wheel-container {
+  position: relative;
+  width: 600rpx;
+  height: 600rpx;
+  margin-bottom: 40rpx;
+}
+
+.wheel-canvas {
+  width: 600rpx;
+  height: 600rpx;
+}
+
+.wheel-pointer {
+  position: absolute;
+  top: -20rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 60rpx;
+  filter: drop-shadow(0 4rpx 8rpx rgba(0,0,0,0.2));
+}
+
+.draw-btn {
+  padding: 28rpx 80rpx;
+  background: linear-gradient(135deg, #639922 0%, #3B6D11 100%);
+  border-radius: 48rpx;
+  box-shadow: 0 6rpx 20rpx rgba(99, 153, 34, 0.4);
+}
+
+.draw-btn.disabled {
+  opacity: 0.6;
+}
+
+.draw-btn text {
+  font-size: 36rpx;
+  color: #fff;
+  font-weight: bold;
+}
+
+/* 结果展示 */
+.result-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx 0;
+}
+
+.card-reveal {
+  animation: cardReveal 0.6s ease-out;
+}
+
+@keyframes cardReveal {
+  from {
+    transform: scale(0.3) rotateY(90deg);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) rotateY(0deg);
+    opacity: 1;
+  }
+}
+
+.card {
+  width: 560rpx;
+  border-radius: 32rpx;
+  padding: 40rpx 30rpx;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.card.N {
+  background: #EAF3DE;
+  border: 4rpx solid #639922;
+}
+
+.card.R {
+  background: #E6F1FB;
+  border: 4rpx solid #185FA5;
+}
+
+.card.SR {
+  background: #FAEEDA;
+  border: 4rpx solid #854F0B;
+}
+
+.card-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16rpx;
+}
+
+.rarity-badge {
+  padding: 8rpx 20rpx;
+  border-radius: 16rpx;
+  font-size: 24rpx;
+  font-weight: bold;
+  color: #fff;
+}
+
+.card.N .rarity-badge { background: #639922; }
+.card.R .rarity-badge { background: #185FA5; }
+.card.SR .rarity-badge { background: #854F0B; }
+
+.card-emoji {
+  font-size: 120rpx;
+  margin: 20rpx 0;
+}
+
+.card-name {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #2C2C2A;
+  margin-bottom: 16rpx;
+}
+
+.card-task {
+  font-size: 28rpx;
+  color: #5F5E5A;
+  margin-bottom: 12rpx;
+}
+
+.card-desc {
+  font-size: 26rpx;
+  color: #888780;
+  font-style: italic;
+  margin-bottom: 24rpx;
+}
+
+.card-reward {
+  display: flex;
+  justify-content: center;
+  gap: 40rpx;
+  padding-top: 16rpx;
+}
+
+.reward-xp, .reward-gold {
+  font-size: 28rpx;
+  font-weight: bold;
+}
+
+.reward-xp { color: #3B6D11; }
+.reward-gold { color: #854F0B; }
+
+/* 操作按钮 */
+.action-btns {
+  display: flex;
+  gap: 24rpx;
+  margin-top: 30rpx;
+}
+
+.btn {
+  padding: 24rpx 48rpx;
+  border-radius: 24rpx;
+  font-size: 30rpx;
+  font-weight: 500;
+}
+
+.btn-confirm {
+  background: #639922;
+  color: #fff;
+}
+
+.btn-redraw {
+  background: #fff;
+  border: 2rpx solid #639922;
+  color: #639922;
+}
+
+/* 签到弹窗 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  width: 560rpx;
+  background: #fff;
+  border-radius: 32rpx;
+  padding: 40rpx;
+  text-align: center;
+}
+
+.modal-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #2C2C2A;
+  margin-bottom: 30rpx;
+}
+
+.checkin-reward {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 30rpx;
+}
+
+.reward-text {
+  font-size: 32rpx;
+  color: #639922;
+  font-weight: bold;
+}
+
+.consecutive-text {
+  font-size: 26rpx;
+  color: #888780;
+}
+
+.modal-btn {
+  padding: 20rpx 60rpx;
+  background: #639922;
+  border-radius: 24rpx;
+  display: inline-block;
+}
+
+.modal-btn text {
+  font-size: 30rpx;
+  color: #fff;
+  font-weight: 500;
+}
